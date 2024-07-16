@@ -292,6 +292,32 @@ services:
 #    networks:
 #      - app-network
 
+  ## Prometheus
+  prometheus:
+    image: prom/prometheus:v2.37.1
+    container_name: prometheus
+    restart: always
+    ports:
+      - ${PROMETHEUS_LOCAL_PORT}:${PROMETHEUS_DOCKER_PORT}
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+        -
+
+  grafana:
+    image: grafana/grafana-oss:8.5.2
+    container_name: grafana
+    restart: always
+    ports:
+      - ${GRAFANA_LOCAL_PORT}:${GRAFANA_DOCKER_PORT}
+    links:
+      - prometheus:prometheus
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+
 networks:
   app-network:
     driver: bridge
