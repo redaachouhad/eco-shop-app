@@ -30,7 +30,7 @@ function NavAdminLeftClient() {
           <div className="h-full w-fit container">
             <Image src={imageLogo} alt="image logo" height={32} width={32} />
           </div>
-          <p className="text-white text-xl w-fit font-semibold">Eco-Shop</p>
+          <p className="text-white text-xl w-fit font-semibold">Eco-Shop-App</p>
         </div>
         <div
           className="text-xl cursor-pointer block lg:hidden"
@@ -67,6 +67,11 @@ function NavAdminLeftClient() {
           path="/admin_space/logout"
           icon={<IoLogOutOutline className="text-xl" />}
         />
+      </div>
+      <div className="absolute text-white bottom-0 w-full flex justify-center p-4">
+        <p className="text-center">
+          Reda Achouhad © CopyRights {new Date().getFullYear()}
+        </p>
       </div>
     </div>
   );

@@ -32,7 +32,7 @@ function NavAdminLeft() {
           <div className="h-full w-fit container">
             <Image src={imageLogo} alt="image logo" height={32} width={32} />
           </div>
-          <p className="text-white text-xl w-fit font-semibold">Eco-Shop</p>
+          <p className="text-white text-xl w-fit font-semibold">Eco-Shop-App</p>
         </div>
         <div
           className="text-xl cursor-pointer block lg:hidden"
@@ -58,7 +58,6 @@ function NavAdminLeft() {
           path="/admin_space/addNewProduct"
           icon={<MdAddCircle className="text-xl" />}
         />
-
         <ItemLeftMenu
           title="Add category"
           path="/admin_space/addCategory"
@@ -75,12 +74,16 @@ function NavAdminLeft() {
           path="/admin_space/admins"
           icon={<GrUserAdmin className="text-xl" />}
         />
-
         <ItemLeftMenu
           title="Logout"
           path="/admin_space/logout"
           icon={<IoLogOutOutline className="text-xl" />}
         />
+      </div>
+      <div className="absolute text-white bottom-0 w-full flex justify-center p-4">
+        <p className="text-center">
+          Reda Achouhad © CopyRights {new Date().getFullYear()}
+        </p>
       </div>
     </div>
   );

@@ -92,7 +92,7 @@ function DashboardPage() {
         <ChartBlock title="Total Users" />
         <ChartBlockBar title="Age customers" />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-white">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-white">
         <div className="flex flex-col bg-[rgba(0,0,0,0.3)] justify-center items-center p-2 gap-2 rounded-lg">
           <div className="bg-[rgba(255,255,255,0.2)] p-1.5 rounded-md">
             <FaFacebook fontSize={30} />
@@ -100,7 +100,7 @@ function DashboardPage() {
           <p className="text-2xl font-semibold">84K</p>
           <p className="text-sm">Facebook Users</p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
