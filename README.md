@@ -1,5 +1,7 @@
 # **Eco-Sho-App (Ecommerce Application)**
 
+Please Read the README.md file
+
 ## 1. Introduction :
 
 Our ecommerce application uses Next.js for the frontend and Spring Boot for the backend. It's Dockerized for easy deployment and secured with Keycloak for user authentication. We've integrated Stripe for handling payments securely, ensuring a smooth shopping experience for our users.
