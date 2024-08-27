@@ -232,20 +232,20 @@ services:
 #       .
 #       .
 
-# grafana:
-#   image: grafana/grafana:latest
-#   container_name: grafana
-#   restart: always
+# nextJsApp:
+#   image: redachouhad665/redachouhad-eco-shop/frontend-nextjs-app:latest
+#   container_name: frontend_nextJsApp
+#   build:
+#     context: ./../eco-shop-frontend
+#     dockerfile: Dockerfile
 #   ports:
-#     - ${GRAFANA_LOCAL_PORT}:${GRAFANA_DOCKER_PORT}
-#   links:
-#     - prometheus:prometheus
-#   volumes:
-#     - ./grafana:/var/lib/grafana
+#     - ${FRONTEND_LOCAL_PORT}:${FRONTEND_DOCKER_PORT}
 #   environment:
-#     - GF_SECURITY_ADMIN_USER=admin
-#     - GF_SECURITY_ADMIN_PASSWORD=password
-#     - GF_SERVER_HTTP_PORT=${GRAFANA_LOCAL_PORT}
+#     NODE_ENV: production
+#     KEYCLOAK_ISSUER_DOCKER: http://keycloak_web:8080/realms/eco-shop-app
+#   depends_on:
+#     - keycloak_web
+#     - apiGateway
 #   networks:
 #     - app-network
 
@@ -448,20 +448,20 @@ Now, we have finished the configuration of keycloak
         .
         .
 
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    restart: always
+  nextJsApp:
+    image: redachouhad665/redachouhad-eco-shop/frontend-nextjs-app:latest
+    container_name: frontend_nextJsApp
+    build:
+      context: ./../eco-shop-frontend
+      dockerfile: Dockerfile
     ports:
-      - ${GRAFANA_LOCAL_PORT}:${GRAFANA_DOCKER_PORT}
-    links:
-      - prometheus:prometheus
-    volumes:
-      - ./grafana:/var/lib/grafana
+      - ${FRONTEND_LOCAL_PORT}:${FRONTEND_DOCKER_PORT}
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=password
-      - GF_SERVER_HTTP_PORT=${GRAFANA_LOCAL_PORT}
+      NODE_ENV: production
+      KEYCLOAK_ISSUER_DOCKER: http://keycloak_web:8080/realms/eco-shop-app
+    depends_on:
+      - keycloak_web
+      - apiGateway
     networks:
       - app-network
 
