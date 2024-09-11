@@ -18,27 +18,31 @@ Our ecommerce application follows a modern microservices architecture, with a fr
 
 Before starting the development of this ecommerce application, a thorough analysis was conducted. This process included creating essential diagrams to ensure a clear understanding of the system's requirements and structure.
 
-#### 3.2.1. Use Case Diagram :
 
-The first step was to create a Use Case Diagram. This diagram helped identify the main interactions between users (administrators, customer) and the system.
 
-![alt text](./image%20for%20ReadMe/useCaseDiagram.png)
-
-#### 3.2.2. Entity-Relationship (ER) Diagram :
+#### 3.2.1. Entity-Relationship (ER) Diagram :
 
 Following the Use Case Diagram, an Entity-Relationship (ER) Diagram was created. This diagram focused on the database structure, identifying the main entities, their attributes, and the relationships between them.
 
 ![alt text](./image%20for%20ReadMe/entityDiagram.png)
 
-#### 3.2.3. Translation to Relational Schema :
+#### 3.2.2. Translation to Relational Schema :
 
 After defining the entities and their relationships in the ER diagram, the next step was the Translation to a Relational Schema. This process involved converting the conceptual model from the ER diagram into a relational model, which could be implemented in a relational database.
 
 ![alt text](./image%20for%20ReadMe/relationelle.png)
 
-#### 3.2.4. Microservice Decomposition :
+#### 3.2.3. Microservice Decomposition :
 
 ![alt text](./image%20for%20ReadMe/decompositionMicroservices.png)
+
+
+#### 3.2.4. Use Case Diagram :
+
+The use case diagram helped identify the main interactions between users (administrators, customer) and the system.
+
+![alt text](./image%20for%20ReadMe/useCaseDiagram.png)
+
 
 ### 3.3. Frontend Components :
 
