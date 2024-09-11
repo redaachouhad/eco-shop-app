@@ -24,7 +24,7 @@ Before starting the development of this ecommerce application, a thorough analys
 
 Following the Use Case Diagram, an Entity-Relationship (ER) Diagram was created. This diagram focused on the database structure, identifying the main entities, their attributes, and the relationships between them.
 
-![alt text](./image%20for%20ReadMe/entityDiagram.png)
+![alt text](./image%20for%20ReadMe/mcd.png)
 
 #### 3.2.2. Translation to Relational Schema :
 
