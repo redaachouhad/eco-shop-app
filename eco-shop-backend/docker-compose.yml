@@ -1,0 +1,345 @@
+services:
+
+  keycloak_db:
+    image: postgres:latest
+    container_name: keycloak_db_container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}s
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - ${POSTGRES_LOCAL}:${POSTGRES_DOCKER}
+    networks:
+      - app-network
+
+  keycloak_web:
+    image: quay.io/keycloak/keycloak:23.0.6
+    container_name: keycloak-web-container
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak_db:${POSTGRES_DOCKER}/${POSTGRES_DB}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KEYCLOAK_LOGLEVEL: INFO
+      ROOT_LOGLEVEL: INFO
+      KEYCLOAK_FRONTEND_URL: http://localhost:8080/auth
+    ports:
+      - ${KEYCLOAK_PORT_LOCAL}:${KEYCLOAK_PORT_DOCKER}
+    depends_on:
+      - keycloak_db
+    command: ["start-dev", "--import-realm"]
+    volumes:
+      - ./keycloak/realms/:/opt/keycloak/data/import
+    networks:
+      - app-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - app-network
+
+  broker:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: broker
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    networks:
+      - app-network
+#
+#
+#  eurekaService:
+#    image: redachouhad665/redachouhad-eco-shop/eureka-service:latest
+#    container_name: eureka_service
+#    build:
+#      context: ./eureka-service
+#      dockerfile: Dockerfile
+#    ports:
+#      - ${SERVICE_EUREKA_LOCAL_PORT}:${SERVICE_EUREKA_DOCKER_PORT}
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    networks:
+#      - app-network
+#
+#  apiGateway:
+#    image: redachouhad665/redachouhad-eco-shop/api-gateway:latest
+#    container_name: api_gateway
+#    build:
+#      context: ./api-gateway
+#      dockerfile: Dockerfile
+#    ports:
+#      - ${SERVICE_APIGATEWAY_LOCAL_PORT}:${SERVICE_APIGATEWAY_DOCKER_PORT}
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    depends_on:
+#      - eurekaService
+#      - keycloak_web
+#    networks:
+#      - app-network
+#
+#  postgresUser:
+#    container_name: postgres_user
+#    image: postgres:latest
+#    environment:
+#      POSTGRES_DB: ${POSTGRES_USER_DATABASE}
+#      POSTGRES_USER: ${POSTGRES_USER_DB_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_USER_ROOT_PASSWORD}
+#    volumes:
+#      - user_service_db:/data/postgres_user_data
+#    ports:
+#      - ${POSTGRES_USER_LOCAL_PORT}:${POSTGRES_USER_DOCKER_PORT}
+#    restart: always
+#    networks:
+#      - app-network
+#
+#  userService:
+#    image: redachouhad665/redachouhad-eco-shop/user-service:latest
+#    container_name: user_service
+#    build:
+#      context: ./user-service
+#      dockerfile: Dockerfile
+#    ports:
+#      - ${SERVICE_USER_LOCAL_PORT}:${SERVICE_USER_DOCKER_PORT}
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    depends_on:
+#      - eurekaService
+#      - postgresUser
+#      - apiGateway
+#    networks:
+#      - app-network
+#
+#  postgresProduct:
+#    container_name: postgres_product
+#    image: postgres:latest
+#    environment:
+#      POSTGRES_DB: ${POSTGRES_PRODUCT_DATABASE}
+#      POSTGRES_USER: ${POSTGRES_PRODUCT_DB_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_PRODUCT_ROOT_PASSWORD}
+#    volumes:
+#      - product_service_db:/data/postgres_product_data
+#    ports:
+#      - ${POSTGRES_PRODUCT_LOCAL_PORT}:${POSTGRES_PRODUCT_DOCKER_PORT}
+#    restart: always
+#    networks:
+#      - app-network
+#
+#  productService:
+#    image: redachouhad665/redachouhad-eco-shop/product-service:latest
+#    container_name: product_service
+#    build:
+#      context: ./product-service
+#      dockerfile: Dockerfile
+#    ports:
+#      - ${SERVICE_PRODUCT_LOCAL_PORT}:${SERVICE_PRODUCT_DOCKER_PORT}
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    depends_on:
+#      - eurekaService
+#      - postgresProduct
+#      - apiGateway
+#    networks:
+#      - app-network
+#
+#  postgresOrder:
+#    container_name: postgres_order
+#    image: postgres:latest
+#    environment:
+#      POSTGRES_DB: ${POSTGRES_ORDER_DATABASE}
+#      POSTGRES_USER: ${POSTGRES_ORDER_DB_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_ORDER_ROOT_PASSWORD}
+#    volumes:
+#      - order_service_db:/data/postgres_order_data
+#    ports:
+#      - ${POSTGRES_ORDER_LOCAL_PORT}:${POSTGRES_ORDER_DOCKER_PORT}
+#    restart: always
+#    networks:
+#      - app-network
+#
+#  orderService:
+#    image: redachouhad665/redachouhad-eco-shop/order-service:latest
+#    container_name: order_service
+#    build:
+#      context: ./order-service
+#      dockerfile: Dockerfile
+#    ports:
+#      - ${SERVICE_ORDER_LOCAL_PORT}:${SERVICE_ORDER_DOCKER_PORT}
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    depends_on:
+#      - eurekaService
+#      - postgresOrder
+#      - zookeeper
+#      - broker
+#      - apiGateway
+#    networks:
+#      - app-network
+#
+#  postgresReview:
+#    container_name: postgres_review
+#    image: postgres:latest
+#    environment:
+#      POSTGRES_DB: ${POSTGRES_REVIEW_DATABASE}
+#      POSTGRES_USER: ${POSTGRES_REVIEW_DB_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_REVIEW_ROOT_PASSWORD}
+#    volumes:
+#      - review_service_db:/data/postgres_review_data
+#    ports:
+#      - ${POSTGRES_REVIEW_LOCAL_PORT}:${POSTGRES_REVIEW_DOCKER_PORT}
+#    restart: always
+#    networks:
+#      - app-network
+#
+#  reviewService:
+#    image: redachouhad665/redachouhad-eco-shop/review-service:latest
+#    container_name: review_service
+#    build:
+#      context: ./review-service
+#      dockerfile: Dockerfile
+#    ports:
+#      - ${SERVICE_REVIEW_LOCAL_PORT}:${SERVICE_REVIEW_DOCKER_PORT}
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    depends_on:
+#      - eurekaService
+#      - postgresReview
+#      - apiGateway
+#    networks:
+#      - app-network
+#
+#  postgresCart:
+#    container_name: postgres_cart
+#    image: postgres:latest
+#    environment:
+#      POSTGRES_DB: ${POSTGRES_CART_DATABASE}
+#      POSTGRES_USER: ${POSTGRES_CART_DB_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_CART_ROOT_PASSWORD}
+#    volumes:
+#      - cart_service_db:/data/postgres_cart_data
+#    ports:
+#      - ${POSTGRES_CART_LOCAL_PORT}:${POSTGRES_CART_DOCKER_PORT}
+#    restart: always
+#    networks:
+#      - app-network
+#
+#  cartService:
+#    image: redachouhad665/redachouhad-eco-shop/cart-service:latest
+#    container_name: cart_service
+#    build:
+#      context: ./cart-service
+#      dockerfile: Dockerfile
+#    ports:
+#      - ${SERVICE_CART_LOCAL_PORT}:${SERVICE_CART_DOCKER_PORT}
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    depends_on:
+#      - eurekaService
+#      - postgresCart
+#      - apiGateway
+#    networks:
+#      - app-network
+#
+#  notificationService:
+#    image: redachouhad665/redachouhad-eco-shop/notification-service:latest
+#    container_name: notification_service
+#    build:
+#      context: ./notification-service
+#      dockerfile: Dockerfile
+#    ports:
+#      - ${SERVICE_NOTIFICATION_LOCAL_PORT}:${SERVICE_NOTIFICATION_DOCKER_PORT}
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    depends_on:
+#      - eurekaService
+#      - zookeeper
+#      - broker
+#    networks:
+#      - app-network
+#
+#  nextJsApp:
+#    image: redachouhad665/redachouhad-eco-shop/frontend-nextjs-app:latest
+#    container_name: frontend_nextJsApp
+#    build:
+#      context: ./../eco-shop-frontend
+#      dockerfile: Dockerfile
+#    ports:
+#      - ${FRONTEND_LOCAL_PORT}:${FRONTEND_DOCKER_PORT}
+#    environment:
+#      NODE_ENV: production
+#      KEYCLOAK_ISSUER_DOCKER: http://keycloak_web:8080/realms/eco-shop-app
+#    depends_on:
+#      - keycloak_web
+#      - apiGateway
+#    networks:
+#      - app-network
+#
+#  ## Prometheus
+#  prometheus:
+#    image: prom/prometheus:latest
+#    container_name: prometheus
+#    restart: always
+#    ports:
+#      - ${PROMETHEUS_LOCAL_PORT}:${PROMETHEUS_DOCKER_PORT}
+#    volumes:
+#      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#    depends_on:
+#      - notificationService
+#      - userService
+#      - orderService
+#      - productService
+#      - cartService
+#      - reviewService
+#    networks:
+#      - app-network
+#
+#  grafana:
+#    image: grafana/grafana:latest
+#    container_name: grafana
+#    restart: always
+#    ports:
+#      - ${GRAFANA_LOCAL_PORT}:${GRAFANA_DOCKER_PORT}
+#    links:
+#      - prometheus:prometheus
+#    volumes:
+#      - ./grafana:/var/lib/grafana
+#    environment:
+#      - GF_SECURITY_ADMIN_USER=admin
+#      - GF_SECURITY_ADMIN_PASSWORD=password
+#      - GF_SERVER_HTTP_PORT=${GRAFANA_LOCAL_PORT}
+#    networks:
+#      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+#  review_service_db:
+#  user_service_db:
+#  product_service_db:
+#  cart_service_db:
+#  order_service_db:
+  postgres_data:
+    driver: local
